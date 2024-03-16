@@ -4,7 +4,8 @@
   "description": "back end repo for in-stock project (BSSE)",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   "homepage": "https://github.com/ryn-ngn/instock-group-2-server#readme",
   "dependencies": {
     "dotenv": "^16.4.5",
-    "express": "^4.18.3"
+    "express": "^4.18.3",
+    "nodemon": "^3.1.0"
   }
 }
