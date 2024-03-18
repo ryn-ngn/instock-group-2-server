@@ -1,12 +1,16 @@
-const express = require("express");
-const router = express.Router();
+const knex = require("knex")(require("../knexfile"));
+const router = require("express").Router();
 
 //routes handlers
-router.route("/").get((req, res) => {
+router.get("/", async (req, res) => {
   try {
-    res.status(200).json("this is inventory route");
-  } catch (error) {
-    res.status(400).send(`Couldn't retrieve inventory data: ${error}`);
+    console.log("fetching inventories from db.......");
+    const data = await knex("inventories");
+
+    res.status(200).json(data);
+  } catch (err) {
+    console.log("error : " + err);
+    res.status(400).send("Error while retrieving inventories..." + err);
   }
 });
 
