@@ -9,3 +9,5 @@ router.route('/').get((req, res) => {
         res.status(400).send(`Couldn't retrieve warehouses data: ${error}`);
     }
 })
+
+module.exports = router;
