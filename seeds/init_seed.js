@@ -3,9 +3,9 @@ const inventoriesData = require("../seed-data/inventories");
 
 exports.seed = async function (knex) {
   // Deletes ALL existing entries
-  await knex("warehouse").del();
-  await knex("inventory").del();
+  await knex("warehouses").del();
+  await knex("inventories").del();
 
-  await knex("warehouse").insert(warehousesData);
-  await knex("inventory").insert(inventoriesData);
+  await knex("warehouses").insert(warehousesData);
+  await knex("inventories").insert(inventoriesData);
 };
