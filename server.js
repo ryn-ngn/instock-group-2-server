@@ -10,8 +10,8 @@ app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 
 // Routes
-app.use("/warehouses", warehouseRoutes);
-app.use("/inventories", inventoryRoutes);
+app.use("/api/warehouses", warehouseRoutes);
+app.use("/api/inventories", inventoryRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
