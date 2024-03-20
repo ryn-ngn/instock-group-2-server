@@ -9,6 +9,7 @@ const index = async (_req, res) => {
   }
 };
 
+//this is to find a single warehouse
 const findWarehouse = async (req, res) => {
   try {
     const warehousesFound = await knex("warehouses").where({
