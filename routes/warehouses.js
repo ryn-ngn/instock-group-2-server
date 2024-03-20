@@ -1,12 +1,6 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
+const warehouseController = require("../controllers/warehouse-controller");
 
 //routes handlers
-router.route("/").get((req, res) => {
-  try {
-    res.status(200).json("this is warehouses route");
-  } catch (error) {
-    res.status(400).send(`Couldn't retrieve warehouses data: ${error}`);
-  }
-});
+router.route("/").get(warehouseController.index);
 module.exports = router;
