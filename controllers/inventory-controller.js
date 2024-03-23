@@ -1,8 +1,10 @@
 const knex = require("knex")(require("../knexfile"));
+const helper = require('../utils/helper')
 const {
   validateNewItem,
   findWarehouseIdByName,
 } = require("../helpers/inventoryHelpers");
+
 
 const getAllInventories = async (_req, res) => {
   try {
@@ -130,8 +132,34 @@ const postNewInventoryItem = async (req, res) => {
   }
 };
 
+//update inventory by ID
+const editInventoryItemById = async (req, res) => {
+
+  helper.validateInventoryUpdateRequest(req, res);
+
+  try {
+    await knex("inventories")
+      .where("inventories.id", req.params.id)
+      .update(req.body)
+    res.status(200).json({
+      id: req.params.id,
+      warehouse_id: req.body.warehouse_id,
+      item_name: req.body.item_name,
+      description: req.body.description,
+      category: req.body.category,
+      status: req.body.status,
+      quantity: req.body.quantity
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to update inventory item with id: ${req.params.id}`,
+    });
+  }
+}
+
 module.exports = {
   getAllInventories,
   getItemById,
   postNewInventoryItem,
+  editInventoryItemById,
 };
