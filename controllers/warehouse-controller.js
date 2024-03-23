@@ -3,7 +3,34 @@ const knex = require("knex")(require("../knexfile"));
 const getAllWarehouses = async (_req, res) => {
   try {
     const data = await knex("warehouses");
-    res.status(200).json(data);
+
+    const warehouseData = data.map((warehouseInfo) => {
+      const {
+        id,
+        warehouse_name,
+        address,
+        city,
+        country,
+        contact_name,
+        contact_position,
+        contact_phone,
+        contact_email,
+      } = warehouseInfo;
+
+      return {
+        id,
+        warehouse_name,
+        address,
+        city,
+        country,
+        contact_name,
+        contact_position,
+        contact_phone,
+        contact_email,
+      };
+    });
+
+    res.status(200).json(warehouseData);
   } catch (error) {
     res.status(400).send(`Error retrieving warehouses: ${error}`);
   }
