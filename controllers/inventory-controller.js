@@ -37,6 +37,38 @@ const getAllInventories = async (_req, res) => {
   }
 };
 
+//Finding an inventory item with a specific id
+
+const findItem = async (req, res) => {
+  try {
+    const itemFound = await knex("inventories")
+      .join("warehouses", "inventories.warehouse_id", "=", "warehouses.id")
+      .select(
+        "inventories.id",
+        "warehouses.warehouse_name",
+        "inventories.item_name",
+        "inventories.description",
+        "inventories.category",
+        "inventories.status",
+        "inventories.quantity"
+      );
+
+    if (itemFound.length === 0) {
+      return res.status(404).json({
+        message: `Inventory item with ID ${req.params.id} not found`,
+      });
+    }
+
+    const inventoryDetails = itemFound[0];
+    res.status(200).json(inventoryDetails);
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to retrieve inventory details: ${err.message}`,
+    });
+  }
+};
+
 module.exports = {
   getAllInventories,
+  findItem,
 };
