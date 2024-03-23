@@ -1,6 +1,6 @@
 const knex = require("knex")(require("../knexfile"));
 
-const index = async (_req, res) => {
+const getAllWarehouses = async (_req, res) => {
   try {
     const data = await knex("warehouses");
     res.status(200).json(data);
@@ -10,7 +10,7 @@ const index = async (_req, res) => {
 };
 
 //this is to find a single warehouse
-const findWarehouse = async (req, res) => {
+const getWarehouseById = async (req, res) => {
   try {
     const warehousesFound = await knex("warehouses").where({
       id: req.params.id,
@@ -30,6 +30,6 @@ const findWarehouse = async (req, res) => {
 };
 
 module.exports = {
-  index,
-  findWarehouse,
+  getAllWarehouses,
+  getWarehouseById,
 };
