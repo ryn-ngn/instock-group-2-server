@@ -4,6 +4,6 @@ const inventoryController = require("../controllers/inventory-controller");
 //routes handlers
 router.route("/").get(inventoryController.getAllInventories);
 
-router.route("/:id").get(inventoryController.findItem);
+router.route("/:id").get(inventoryController.getItemById);
 
 module.exports = router;
