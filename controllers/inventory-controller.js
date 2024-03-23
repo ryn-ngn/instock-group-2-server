@@ -39,7 +39,7 @@ const getAllInventories = async (_req, res) => {
 
 //Finding an inventory item with a specific id
 
-const findItem = async (req, res) => {
+const getItemById = async (req, res) => {
   try {
     const itemFound = await knex("inventories")
       .join("warehouses", "inventories.warehouse_id", "=", "warehouses.id")
@@ -71,5 +71,5 @@ const findItem = async (req, res) => {
 
 module.exports = {
   getAllInventories,
-  findItem,
+  getItemById,
 };
