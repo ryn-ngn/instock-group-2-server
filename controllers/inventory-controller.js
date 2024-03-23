@@ -6,18 +6,29 @@ const index = async (_req, res) => {
     const dataWarehouse = await knex("warehouses");
 
     const inventoryData = data.map((item) => {
-      const container = {};
-      container.id = item.id;
-      container.warehouse_name = dataWarehouse.find(
-        (w) => w.id === item.warehouse_id
-      ).warehouse_name;
-      container.item_name = item.item_name;
-      container.description = item.description;
-      container.category = item.category;
-      container.status = item.status;
-      container.quantity = item.quantity;
+      const {
+        id,
+        warehouse_id,
+        item_name,
+        description,
+        category,
+        status,
+        quantity,
+      } = item;
 
-      return container;
+      const { warehouse_name } = dataWarehouse.find(
+        (w) => w.id === warehouse_id
+      );
+
+      return {
+        id,
+        warehouse_name,
+        item_name,
+        description,
+        category,
+        status,
+        quantity,
+      };
     });
 
     res.status(200).json(inventoryData);
