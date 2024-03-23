@@ -51,7 +51,8 @@ const findItem = async (req, res) => {
         "inventories.category",
         "inventories.status",
         "inventories.quantity"
-      );
+      )
+      .where("inventories.id", req.params.id);
 
     if (itemFound.length === 0) {
       return res.status(404).json({
