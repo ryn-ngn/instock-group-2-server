@@ -59,9 +59,10 @@ const getWarehouseById = async (req, res) => {
 // This method will delete a single warehouse with specific id
 const deleteWarehouseById = async (req, res) => {
   try {
-    const rowsDeleted = await knex("warehouses")
-      .where({ id: req.params.id })
-      .delete();
+    const rowsDeleted = await knex("warehouses").where({ id: req.params.id });
+    if (rowsDeleted) {
+      rowsDeleted.delete();
+    }
 
     if (rowsDeleted === 0) {
       return res.status(404).json({
