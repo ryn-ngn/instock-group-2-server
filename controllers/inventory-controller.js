@@ -1,4 +1,8 @@
 const knex = require("knex")(require("../knexfile"));
+const {
+  validateNewItem,
+  findWarehouseIdByName,
+} = require("../helpers/inventoryHelpers");
 
 const getAllInventories = async (_req, res) => {
   try {
@@ -81,40 +85,29 @@ const postNewInventoryItem = async (req, res) => {
     } = req.body;
 
     // Validate data
-    if (
-      !item_name ||
-      !description ||
-      !category ||
-      !status ||
-      quantity === undefined ||
-      !warehouse_name
-    ) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-    // Check if quantity is a valid number
-    if (isNaN(parseInt(quantity, 10))) {
-      return res.status(400).json({ message: "Quantity must be a number" });
+    const validation = await validateNewItem(req.body);
+    if (!validation.isValid) {
+      return res.status(400).json({ message: validation.message });
     }
 
     // Look up the warehouse ID based on the warehouse name
-    const warehouse = await knex("warehouses")
-      .where("warehouse_name", warehouse_name)
-      .first();
-    if (!warehouse) {
+    const warehouseId = await findWarehouseIdByName(
+      knex,
+      req.body.warehouse_name
+    );
+    if (!warehouseId) {
       return res.status(400).json({ message: "Warehouse name does not exist" });
     }
 
     // Insert new item into the database using the found warehouse ID
-    const [newItemId] = await knex("inventories")
-      .insert({
-        item_name,
-        description,
-        category,
-        status,
-        quantity, // Already validated as a number
-        warehouse_id: warehouse.id, // Use the ID from the warehouse we found above
-      })
-      .returning("id");
+    const [newItemId] = await knex("inventories").insert({
+      item_name,
+      description,
+      category,
+      status,
+      quantity, // Already validated as a number
+      warehouse_id: warehouseId, // Use the ID from the warehouse we found above
+    });
 
     // Retrieve and respond with the inserted item
     const insertedItem = await knex("inventories")
