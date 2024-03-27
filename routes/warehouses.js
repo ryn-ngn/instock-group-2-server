@@ -9,4 +9,9 @@ router
   .get(warehouseController.getWarehouseById)
   .delete(warehouseController.deleteWarehouseById);
 
+// Lists all inventories in a specific warehouse id
+router
+  .route("/:id/inventories")
+  .get(warehouseController.getInventoriesOfWarehouseById);
+
 module.exports = router;
