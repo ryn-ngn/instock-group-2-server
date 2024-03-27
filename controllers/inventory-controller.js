@@ -37,8 +37,7 @@ const getAllInventories = async (_req, res) => {
   }
 };
 
-//Finding an inventory item with a specific id
-
+//GET inventory item with a specific id
 const getItemById = async (req, res) => {
   try {
     const itemFound = await knex("inventories")
@@ -69,7 +68,19 @@ const getItemById = async (req, res) => {
   }
 };
 
+//POST a new inventory item
+const postNewInventoryItem = async (req, res) => {
+  try {
+    //something
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to create new inventory item: ${err.message}`,
+    });
+  }
+};
+
 module.exports = {
   getAllInventories,
   getItemById,
+  postNewInventoryItem,
 };
