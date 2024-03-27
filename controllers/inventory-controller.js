@@ -71,7 +71,56 @@ const getItemById = async (req, res) => {
 //POST a new inventory item
 const postNewInventoryItem = async (req, res) => {
   try {
-    //something
+    const {
+      item_name,
+      description,
+      category,
+      status,
+      quantity,
+      warehouse_name,
+    } = req.body;
+
+    // Validate data
+    if (
+      !item_name ||
+      !description ||
+      !category ||
+      !status ||
+      quantity === undefined ||
+      !warehouse_name
+    ) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+    // Check if quantity is a valid number
+    if (isNaN(parseInt(quantity, 10))) {
+      return res.status(400).json({ message: "Quantity must be a number" });
+    }
+
+    // Look up the warehouse ID based on the warehouse name
+    const warehouse = await knex("warehouses")
+      .where("warehouse_name", warehouse_name)
+      .first();
+    if (!warehouse) {
+      return res.status(400).json({ message: "Warehouse name does not exist" });
+    }
+
+    // Insert new item into the database using the found warehouse ID
+    const [newItemId] = await knex("inventories")
+      .insert({
+        item_name,
+        description,
+        category,
+        status,
+        quantity, // Already validated as a number
+        warehouse_id: warehouse.id, // Use the ID from the warehouse we found above
+      })
+      .returning("id");
+
+    // Retrieve and respond with the inserted item
+    const insertedItem = await knex("inventories")
+      .where({ id: newItemId })
+      .first();
+    res.status(201).json(insertedItem);
   } catch (err) {
     res.status(500).json({
       message: `Unable to create new inventory item: ${err.message}`,
