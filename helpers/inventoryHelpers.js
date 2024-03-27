@@ -17,8 +17,12 @@ async function validateNewItem({
   ) {
     return { isValid: false, message: "Missing required fields" };
   }
-  if (isNaN(parseInt(quantity, 10))) {
-    return { isValid: false, message: "Quantity can only be a whole number" };
+  // Use regex to validate that quantity is a whole, non-negative number
+  if (!/^\d+$/.test(quantity)) {
+    return {
+      isValid: false,
+      message: "Quantity must be a whole, non-negative number",
+    };
   }
   return { isValid: true };
 }
