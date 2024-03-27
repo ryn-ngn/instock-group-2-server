@@ -119,6 +119,15 @@ const postNewInventoryItem = async (req, res) => {
     // Retrieve and respond with the inserted item
     const insertedItem = await knex("inventories")
       .where({ id: newItemId })
+      .select(
+        "id",
+        "warehouse_id",
+        "item_name",
+        "description",
+        "category",
+        "status",
+        "quantity"
+      )
       .first();
     res.status(201).json(insertedItem);
   } catch (err) {
