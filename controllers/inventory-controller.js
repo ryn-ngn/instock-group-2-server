@@ -3,7 +3,7 @@ const helper = require('../utils/helper')
 const {
   validateNewItem,
   findWarehouseIdByName,
-} = require("../helpers/inventoryHelpers");
+} = require("../utils/inventoryHelpers");
 
 
 const getAllInventories = async (_req, res) => {
@@ -77,7 +77,31 @@ const getItemById = async (req, res) => {
 //update inventory by ID
 const editInventoryItemById = async (req, res) => {
 
-  helper.validateInventoryUpdateRequest(req, res);
+  const isInvValid = await helper.isInvIdValid(req.params.id)
+  if (!isInvValid)
+    return res.status(400).json({
+      message: `inventory ID is not found`,
+    });
+
+  const { warehouse_id, item_name, description, category, status, quantity } = req.body;
+  if (!warehouse_id || !item_name || !description || !category || !status || !quantity) {
+    return res.status(400).json({
+      message: `Missing properties in the request body`,
+    });
+  }
+
+  const isWhIdValid = await helper.isWarehouseIdValid(warehouse_id);
+  if (!isWhIdValid) {
+    return res.status(400).json({
+      message: `Warehouse ID not found`,
+    });
+  }
+
+  if (isNaN(quantity)) {
+    return res.status(400).json({
+      message: `Quantity is not a number`,
+    });
+  }
 
   try {
     await knex("inventories")

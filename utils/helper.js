@@ -1,37 +1,22 @@
 const knex = require("knex")(require("../knexfile"));
 
-async function validateInventoryUpdateRequest(req, res) {
-    if (!req.params.id) {
-        return res.status(404).json({
-            message: `Inventory item with ID ${req.params.id} not found`,
-        });
-    }
-
-    // const ivnItemId = req.params.id;
-
-    const { warehouse_id, item_name, description, category, status, quantity } = req.body;
-    if (!warehouse_id || !item_name || !description || !category || !status || !quantity) {
-        return res.status(400).json({
-            message: `Missing properties in the request body`,
-        });
-    }
-
-    const warehouseFound = await knex("warehouses").where({
-        id: warehouse_id,
+async function isWarehouseIdValid(input) {
+    const warehousesFound = await knex("warehouses").where({
+        id: input,
     });
-    if (warehouseFound.length === 0) {
-        return res.status(400).json({
-            message: `Warehouse ID not found`,
-        });
-    }
+    console.log(warehousesFound.length !== 0)
+    return warehousesFound.length !== 0;
+}
 
-    if (isNaN(quantity)) {
-        return res.status(400).json({
-            message: `Quantity is not a number`,
-        });
-    }
+async function isInvIdValid(input) {
+    const invFound = await knex("inventories").where({
+        id: input,
+    });
+
+    return invFound.length !== 0;
 }
 
 module.exports = {
-    validateInventoryUpdateRequest
+    isWarehouseIdValid,
+    isInvIdValid,
 }

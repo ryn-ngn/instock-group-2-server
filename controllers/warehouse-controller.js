@@ -86,7 +86,7 @@ const getInventoriesOfWarehouseById = async (req, res) => {
       .join("inventories", "inventories.warehouse_id", "warehouses.id")
       .where({ warehouse_id: req.params.id });
 
-    const warehousehInventoriesData = posts.map((item) => {
+    const warehouseInventoryData = posts.map((item) => {
       const { id, item_name, category, status, quantity } = item;
 
       return {
@@ -102,7 +102,7 @@ const getInventoriesOfWarehouseById = async (req, res) => {
         message: `Warehouse with ID ${req.params.id} is not found`,
       });
     } else {
-      res.status(200).json(warehousehInventoriesData);
+      res.status(200).json(warehouseInventoryData);
     }
   } catch (error) {
     res.status(404).json({
@@ -111,9 +111,14 @@ const getInventoriesOfWarehouseById = async (req, res) => {
   }
 };
 
+const editWarehouseItemById = async (req, res) => {
+
+}
+
 module.exports = {
   getAllWarehouses,
   getWarehouseById,
   deleteWarehouseById,
   getInventoriesOfWarehouseById,
+  editWarehouseItemById,
 };
