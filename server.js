@@ -16,7 +16,11 @@ app.use("/api/inventories", inventory);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("Something happened!");
+  res
+    .status(500)
+    .send(
+      "An unexpected error occurred while processing your request. Please try again later"
+    );
 });
 
 // Start server

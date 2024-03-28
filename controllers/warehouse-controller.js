@@ -36,7 +36,7 @@ const getAllWarehouses = async (_req, res) => {
   }
 };
 
-//this is to find a single warehouse
+//This method will find a single warehouse with specific id
 const getWarehouseById = async (req, res) => {
   try {
     const warehousesFound = await knex("warehouses").where({
@@ -56,7 +56,64 @@ const getWarehouseById = async (req, res) => {
   }
 };
 
+// This method will delete a single warehouse with specific id
+const deleteWarehouseById = async (req, res) => {
+  try {
+    let rowsDeleted = await knex("warehouses").where({ id: req.params.id });
+
+    if (rowsDeleted.length === 0) {
+      return res.status(404).json({
+        message: `Warehouse with ID ${req.params.id} is not found`,
+      });
+    }
+
+    rowsDeleted = await knex("warehouses")
+      .where({ id: req.params.id })
+      .delete();
+
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).json({
+      message: `Unable to delete warehouse: ${error}`,
+    });
+  }
+};
+
+//Get all inventories of a specific warehouse id (ticket 27)
+const getInventoriesOfWarehouseById = async (req, res) => {
+  try {
+    const posts = await knex("warehouses")
+      .join("inventories", "inventories.warehouse_id", "warehouses.id")
+      .where({ warehouse_id: req.params.id });
+
+    const warehousehInventoriesData = posts.map((item) => {
+      const { id, item_name, category, status, quantity } = item;
+
+      return {
+        id,
+        item_name,
+        category,
+        status,
+        quantity,
+      };
+    });
+    if (posts.length === 0) {
+      return res.status(404).json({
+        message: `Warehouse with ID ${req.params.id} is not found`,
+      });
+    } else {
+      res.status(200).json(warehousehInventoriesData);
+    }
+  } catch (error) {
+    res.status(404).json({
+      message: `Unable to retrieve inventories for warehouse with ID ${req.params.id}: ${error}`,
+    });
+  }
+};
+
 module.exports = {
   getAllWarehouses,
   getWarehouseById,
+  deleteWarehouseById,
+  getInventoriesOfWarehouseById,
 };

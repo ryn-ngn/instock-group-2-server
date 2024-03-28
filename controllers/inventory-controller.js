@@ -1,5 +1,9 @@
 const knex = require("knex")(require("../knexfile"));
 const helper = require('../utils/helper')
+const {
+  validateNewItem,
+  findWarehouseIdByName,
+} = require("../helpers/inventoryHelpers");
 
 
 const getAllInventories = async (_req, res) => {
@@ -39,8 +43,7 @@ const getAllInventories = async (_req, res) => {
   }
 };
 
-//Finding an inventory item with a specific id
-
+//GET inventory item with a specific id
 const getItemById = async (req, res) => {
   try {
     const itemFound = await knex("inventories")
@@ -96,8 +99,67 @@ const editInventoryItemById = async (req, res) => {
   }
 }
 
+//POST a new inventory item
+const postNewInventoryItem = async (req, res) => {
+  try {
+    const {
+      item_name,
+      description,
+      category,
+      status,
+      quantity,
+      warehouse_name,
+    } = req.body;
+
+    // Validate data
+    const validation = await validateNewItem(req.body);
+    if (!validation.isValid) {
+      return res.status(400).json({ message: validation.message });
+    }
+
+    // Look up the warehouse ID based on the warehouse name
+    const warehouseId = await findWarehouseIdByName(
+      knex,
+      req.body.warehouse_name
+    );
+    if (!warehouseId) {
+      return res.status(400).json({ message: "Warehouse name does not exist" });
+    }
+
+    // Insert new item into the database using the found warehouse ID
+    const [newItemId] = await knex("inventories").insert({
+      item_name,
+      description,
+      category,
+      status,
+      quantity, // Already validated as a number
+      warehouse_id: warehouseId, // Use the ID from the warehouse we found above
+    });
+
+    // Retrieve and respond with the inserted item
+    const insertedItem = await knex("inventories")
+      .where({ id: newItemId })
+      .select(
+        "id",
+        "warehouse_id",
+        "item_name",
+        "description",
+        "category",
+        "status",
+        "quantity"
+      )
+      .first();
+    res.status(201).json(insertedItem);
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to create new inventory item: ${err.message}`,
+    });
+  }
+};
+
 module.exports = {
   getAllInventories,
   getItemById,
   editInventoryItemById,
+  postNewInventoryItem,
 };
