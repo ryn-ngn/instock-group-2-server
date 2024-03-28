@@ -1,8 +1,10 @@
 const knex = require("knex")(require("../knexfile"));
+const helper = require('../utils/helper')
 const {
   validateNewItem,
   findWarehouseIdByName,
-} = require("../helpers/inventoryHelpers");
+} = require("../utils/inventoryHelpers");
+
 
 const getAllInventories = async (_req, res) => {
   try {
@@ -72,6 +74,55 @@ const getItemById = async (req, res) => {
   }
 };
 
+//update inventory by ID
+const editInventoryItemById = async (req, res) => {
+
+  const isInvValid = await helper.isInvIdValid(req.params.id)
+  if (!isInvValid)
+    return res.status(400).json({
+      message: `inventory ID is not found`,
+    });
+
+  const { warehouse_id, item_name, description, category, status, quantity } = req.body;
+  if (!warehouse_id || !item_name || !description || !category || !status || !quantity) {
+    return res.status(400).json({
+      message: `Missing properties in the request body`,
+    });
+  }
+
+  const isWhIdValid = await helper.isWarehouseIdValid(warehouse_id);
+  if (!isWhIdValid) {
+    return res.status(400).json({
+      message: `Warehouse ID not found`,
+    });
+  }
+
+  if (isNaN(quantity)) {
+    return res.status(400).json({
+      message: `Quantity is not a number`,
+    });
+  }
+
+  try {
+    await knex("inventories")
+      .where("inventories.id", req.params.id)
+      .update(req.body)
+    res.status(200).json({
+      id: req.params.id,
+      warehouse_id: req.body.warehouse_id,
+      item_name: req.body.item_name,
+      description: req.body.description,
+      category: req.body.category,
+      status: req.body.status,
+      quantity: req.body.quantity
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to update inventory item with id: ${req.params.id}`,
+    });
+  }
+}
+
 //POST a new inventory item
 const postNewInventoryItem = async (req, res) => {
   try {
@@ -133,5 +184,6 @@ const postNewInventoryItem = async (req, res) => {
 module.exports = {
   getAllInventories,
   getItemById,
+  editInventoryItemById,
   postNewInventoryItem,
 };
