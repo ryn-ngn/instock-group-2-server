@@ -7,11 +7,11 @@ router.route("/").get(warehouseController.getAllWarehouses);
 router
   .route("/:id")
   .get(warehouseController.getWarehouseById)
-  .delete(warehouseController.deleteWarehouseById);
+  .delete(warehouseController.deleteWarehouseById)
+  .put(warehouseController.editWarehouseById)
 
 // Lists all inventories in a specific warehouse id
 router
   .route("/:id/inventories")
-  .get(warehouseController.getInventoriesOfWarehouseById);
-
+  .get(warehouseController.getInventoriesOfWarehouseById)
 module.exports = router;

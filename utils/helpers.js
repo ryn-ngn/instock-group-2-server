@@ -4,7 +4,6 @@ async function isWarehouseIdValid(input) {
     const warehousesFound = await knex("warehouses").where({
         id: input,
     });
-    console.log(warehousesFound.length !== 0)
     return warehousesFound.length !== 0;
 }
 
