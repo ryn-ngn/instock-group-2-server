@@ -1,10 +1,10 @@
 const knex = require("knex")(require("../knexfile"));
 const { isWarehouseIdValid, isValidPhoneNumberFormat } = require('../utils/helpers')
+const { validateNewWarehouseItem } = require("../utils/warehouseHelpers");
 
 const getAllWarehouses = async (_req, res) => {
   try {
     const data = await knex("warehouses");
-
     const warehouseData = data.map((warehouseInfo) => {
       const {
         id,
@@ -174,10 +174,68 @@ const editWarehouseById = async (req, res) => {
   }
 }
 
+//POST a new warehouse item
+const postNewWarehouseItem = async (req, res) => {
+  try {
+    const {
+      warehouse_name,
+      address,
+      city,
+      country,
+      contact_name,
+      contact_position,
+      contact_phone,
+      contact_email,
+    } = req.body;
+
+    // Validate data
+    const validation = await validateNewWarehouseItem(req.body);
+    if (!validation.isValid) {
+      console.log({ message: validation.message });
+      return res.status(400).json({ message: validation.message });
+    }
+
+    // Insert new warehouse item into the database
+    const [newItemId] = await knex("warehouses").insert({
+      warehouse_name,
+      address,
+      city,
+      country,
+      contact_name,
+      contact_position,
+      contact_phone,
+      contact_email,
+    });
+
+    // Retrieve and respond with the inserted item
+    const insertedItem = await knex("warehouses")
+      .where({ id: newItemId })
+      .select(
+        "id",
+        "warehouse_name",
+        "address",
+        "city",
+        "country",
+        "contact_name",
+        "contact_position",
+        "contact_phone",
+        "contact_email"
+      )
+      .first();
+
+    res.status(201).json(insertedItem);
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to create new warehouse item: ${err.message}`,
+    });
+  }
+};
+
 module.exports = {
   getAllWarehouses,
   getWarehouseById,
   deleteWarehouseById,
   getInventoriesOfWarehouseById,
   editWarehouseById,
+  postNewWarehouseItem,
 };
