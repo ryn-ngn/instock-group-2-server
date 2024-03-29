@@ -220,6 +220,9 @@ const getAllItemCategories = async (req, res) => {
   }
 
 }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 module.exports = {
   getAllInventories,
@@ -227,6 +230,11 @@ module.exports = {
   editInventoryItemById,
   postNewInventoryItem,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+  deleteInventoryItemById,
+  getAllItemCategories
+>>>>>>> Stashed changes
 =======
   deleteInventoryItemById,
   getAllItemCategories
