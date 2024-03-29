@@ -1,4 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
+const { isWarehouseIdValid } = require('../utils/helper')
 
 const getAllWarehouses = async (_req, res) => {
   try {
@@ -59,7 +60,7 @@ const getWarehouseById = async (req, res) => {
 // This method will delete a single warehouse with specific id
 const deleteWarehouseById = async (req, res) => {
   try {
-    let rowsDeleted = await knex("warehouses").where({ id: req.params.id });
+    const rowsDeleted = await knex("warehouses").where({ id: req.params.id });
 
     if (rowsDeleted.length === 0) {
       return res.status(404).json({
@@ -67,11 +68,11 @@ const deleteWarehouseById = async (req, res) => {
       });
     }
 
-    rowsDeleted = await knex("warehouses")
+    await knex("warehouses")
       .where({ id: req.params.id })
       .delete();
 
-    res.sendStatus(204);
+    res.status(204).end();
   } catch (error) {
     res.status(500).json({
       message: `Unable to delete warehouse: ${error}`,
@@ -111,8 +112,66 @@ const getInventoriesOfWarehouseById = async (req, res) => {
   }
 };
 
-const editWarehouseItemById = async (req, res) => {
+const editWarehouseById = async (req, res) => {
 
+  const isWhIdValid = await isWarehouseIdValid(req.params.id);
+  if (!isWhIdValid) {
+    return res.status(404).json({
+      message: `Warehouse ID not found`,
+    });
+  }
+
+  const {
+    warehouse_name,
+    address,
+    city,
+    country,
+    contact_name,
+    contact_position,
+    contact_phone,
+    contact_email
+  } = req.body
+
+  if (
+    !warehouse_name ||
+    !address ||
+    !city ||
+    !country ||
+    !contact_name ||
+    !contact_position ||
+    !contact_phone ||
+    !contact_email) {
+    return res.status(400).json({
+      message: `Missing properties in the request body`,
+    })
+  }
+
+  if (!isValidPhoneNumberFormat(contact_phone)) {
+    return res.status(404).json({
+      message: `Phone number format and/or length not match`,
+    })
+  }
+
+  try {
+    await knex("warehouses")
+      .where("warehouses.id", req.params.id)
+      .update(req.body)
+    res.status(200).json({
+      id: req.params.id,
+      warehouse_name: req.body.warehouse_name,
+      address: req.body.address,
+      city: req.body.city,
+      country: req.body.country,
+      contact_name: req.body.contact_name,
+      contact_position: req.body.contact_position,
+      contact_phone: req.body.contact_phone,
+      contact_email: req.body.contact_email
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to update warehouse with id: ${req.params.id}`,
+    });
+  }
 }
 
 module.exports = {
@@ -120,5 +179,5 @@ module.exports = {
   getWarehouseById,
   deleteWarehouseById,
   getInventoriesOfWarehouseById,
-  editWarehouseItemById,
+  editWarehouseById,
 };

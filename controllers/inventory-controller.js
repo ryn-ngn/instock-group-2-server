@@ -79,7 +79,7 @@ const editInventoryItemById = async (req, res) => {
 
   const isInvValid = await helper.isInvIdValid(req.params.id)
   if (!isInvValid)
-    return res.status(400).json({
+    return res.status(404).json({
       message: `inventory ID is not found`,
     });
 
@@ -181,9 +181,33 @@ const postNewInventoryItem = async (req, res) => {
   }
 };
 
+const deleteInventoryItemById = async (req, res) => {
+  try {
+    // look up item in database to validate params.id    
+    const itemToDelete = await knex("inventories")
+      .where({ id: req.params.id })
+    if (itemToDelete.length === 0) {
+      return res.status(404).json({
+        message: `inventory ID is not found`,
+      });
+    }
+
+    // if id is found, proceed with delete request
+    await knex("inventories")
+      .where({ id: req.params.id })
+      .del()
+
+    res.status(204).end()
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to delete inventory item: ${err.message}`,
+    });
+  }
+}
 module.exports = {
   getAllInventories,
   getItemById,
   editInventoryItemById,
   postNewInventoryItem,
+  deleteInventoryItemById
 };
