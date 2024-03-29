@@ -181,9 +181,23 @@ const postNewInventoryItem = async (req, res) => {
   }
 };
 
+const getAllItemCategories = async (req, res) => {
+  try {
+    const categories = await knex("inventories")
+      .distinct('category')
+      .pluck('category');
+    res.status(200).json(categories)
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable retrieve inventory categories: ${err.message}`,
+    });
+  }
+
+}
 module.exports = {
   getAllInventories,
   getItemById,
   editInventoryItemById,
   postNewInventoryItem,
+  getAllItemCategories
 };
