@@ -3,6 +3,10 @@ const inventoryController = require("../controllers/inventory-controller");
 
 //routes handlers
 router
+  .route("/categories")
+  .get(inventoryController.getAllItemCategories)
+
+router
   .route("/")
   .get(inventoryController.getAllInventories)
   .post(inventoryController.postNewInventoryItem);
