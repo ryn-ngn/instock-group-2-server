@@ -15,7 +15,16 @@ async function isInvIdValid(input) {
     return invFound.length !== 0;
 }
 
+function isValidPhoneNumberFormat(input) {
+    // remove signs +/- and () from phone number string for validation purpose
+    let tempPhoneNoCheck = input.replace(/[()+-\s]/g, '')
+    // north american phone number format only - 10 digits
+    const phoneNumberFormat = /^[0-9]{10}$/
+    return phoneNumberFormat.test(tempPhoneNoCheck)
+}
+
 module.exports = {
     isWarehouseIdValid,
     isInvIdValid,
+    isValidPhoneNumberFormat,
 }

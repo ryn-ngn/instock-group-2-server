@@ -1,5 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
-const { isWarehouseIdValid } = require('../utils/helpers')
+const { isWarehouseIdValid, isValidPhoneNumberFormat } = require('../utils/helpers')
 
 const getAllWarehouses = async (_req, res) => {
   try {
@@ -116,7 +116,7 @@ const editWarehouseById = async (req, res) => {
 
   const isWhIdValid = await isWarehouseIdValid(req.params.id);
   if (!isWhIdValid) {
-    return res.status(400).json({
+    return res.status(404).json({
       message: `Warehouse ID not found`,
     });
   }
@@ -143,6 +143,12 @@ const editWarehouseById = async (req, res) => {
     !contact_email) {
     return res.status(400).json({
       message: `Missing properties in the request body`,
+    })
+  }
+
+  if (!isValidPhoneNumberFormat(contact_phone)) {
+    return res.status(404).json({
+      message: `Phone number format and/or length not match`,
     })
   }
 
