@@ -181,9 +181,54 @@ const postNewInventoryItem = async (req, res) => {
   }
 };
 
+<<<<<<< Updated upstream
+=======
+const deleteInventoryItemById = async (req, res) => {
+  try {
+    // look up item in database to validate params.id    
+    const itemToDelete = await knex("inventories")
+      .where({ id: req.params.id })
+    if (itemToDelete.length === 0) {
+      return res.status(404).json({
+        message: `inventory ID is not found`,
+      });
+    }
+
+    // if id is found, proceed with delete request
+    await knex("inventories")
+      .where({ id: req.params.id })
+      .del()
+
+    res.status(204).end()
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to delete inventory item: ${err.message}`,
+    });
+  }
+}
+
+const getAllItemCategories = async (req, res) => {
+  try {
+    const categories = await knex("inventories")
+      .distinct('category')
+      .pluck('category');
+    res.status(200).json(categories)
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable retrieve inventory categories: ${err.message}`,
+    });
+  }
+
+}
+>>>>>>> Stashed changes
 module.exports = {
   getAllInventories,
   getItemById,
   editInventoryItemById,
   postNewInventoryItem,
+<<<<<<< Updated upstream
+=======
+  deleteInventoryItemById,
+  getAllItemCategories
+>>>>>>> Stashed changes
 };
