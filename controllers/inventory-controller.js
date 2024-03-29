@@ -80,7 +80,7 @@ const editInventoryItemById = async (req, res) => {
 
   const isInvValid = await isInvIdValid(req.params.id)
   if (!isInvValid)
-    return res.status(400).json({
+    return res.status(404).json({
       message: `inventory ID is not found`,
     });
 
@@ -182,9 +182,35 @@ const postNewInventoryItem = async (req, res) => {
   }
 };
 
+const deleteInventoryItemById = async (req, res) => {
+
+  try {
+    // validate to see whether item id is valid
+    const isInvValid = await isInvIdValid(req.params.id)
+    if (!isInvValid)
+      return res.status(404).json({
+        message: `inventory ID is\ not found`,
+      });
+
+    // proceed with delete request
+    await knex("inventories")
+      .where("inventories.id", req.params.id).del()
+
+    // return without response body, code 204
+    // .end() was added to signal that there's no response body, without it, status code wont be received
+    res.status(204).end()
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable to update inventory item with id: ${req.params.id}`,
+    });
+  }
+
+}
+
 module.exports = {
   getAllInventories,
   getItemById,
   postNewInventoryItem,
   editInventoryItemById,
+  deleteInventoryItemById
 };
