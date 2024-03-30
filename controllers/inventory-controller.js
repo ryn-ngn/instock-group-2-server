@@ -1,9 +1,10 @@
 const knex = require("knex")(require("../knexfile"));
-const helper = require('../utils/helper')
+const { isInvIdValid, isWarehouseIdValid } = require('../utils/helpers')
 const {
   validateNewItem,
   findWarehouseIdByName,
 } = require("../utils/inventoryHelpers");
+
 
 
 const getAllInventories = async (_req, res) => {
@@ -77,7 +78,7 @@ const getItemById = async (req, res) => {
 //update inventory by ID
 const editInventoryItemById = async (req, res) => {
 
-  const isInvValid = await helper.isInvIdValid(req.params.id)
+  const isInvValid = await isInvIdValid(req.params.id)
   if (!isInvValid)
     return res.status(404).json({
       message: `inventory ID is not found`,
@@ -90,7 +91,7 @@ const editInventoryItemById = async (req, res) => {
     });
   }
 
-  const isWhIdValid = await helper.isWarehouseIdValid(warehouse_id);
+  const isWhIdValid = await isWarehouseIdValid(warehouse_id);
   if (!isWhIdValid) {
     return res.status(400).json({
       message: `Warehouse ID not found`,
@@ -204,10 +205,25 @@ const deleteInventoryItemById = async (req, res) => {
     });
   }
 }
+const getAllItemCategories = async (req, res) => {
+  try {
+    const categories = await knex("inventories")
+      .distinct('category')
+      .pluck('category');
+    res.status(200).json(categories)
+  } catch (err) {
+    res.status(500).json({
+      message: `Unable retrieve inventory categories: ${err.message}`,
+    });
+  }
+
+}
 module.exports = {
   getAllInventories,
   getItemById,
+  postNewInventoryItem,
   editInventoryItemById,
   postNewInventoryItem,
   deleteInventoryItemById
+  getAllItemCategories
 };
