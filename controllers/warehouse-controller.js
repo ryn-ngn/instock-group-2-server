@@ -60,7 +60,7 @@ const getWarehouseById = async (req, res) => {
 // This method will delete a single warehouse with specific id
 const deleteWarehouseById = async (req, res) => {
   try {
-    let rowsDeleted = await knex("warehouses").where({ id: req.params.id });
+    const rowsDeleted = await knex("warehouses").where({ id: req.params.id });
 
     if (rowsDeleted.length === 0) {
       return res.status(404).json({
@@ -68,11 +68,11 @@ const deleteWarehouseById = async (req, res) => {
       });
     }
 
-    rowsDeleted = await knex("warehouses")
+    await knex("warehouses")
       .where({ id: req.params.id })
       .delete();
 
-    res.sendStatus(204);
+    res.status(204).end();
   } catch (error) {
     res.status(500).json({
       message: `Unable to delete warehouse: ${error}`,
@@ -146,7 +146,6 @@ const editWarehouseById = async (req, res) => {
     })
   }
 
-  console.log('on warehouse ctrller', !isValidPhoneNumberFormat(contact_phone))
   if (!isValidPhoneNumberFormat(contact_phone)) {
     return res.status(404).json({
       message: `Phone number format and/or length not match`,
