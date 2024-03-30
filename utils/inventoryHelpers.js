@@ -12,7 +12,7 @@ async function validateNewItem({
     !description ||
     !category ||
     !status ||
-    quantity === undefined ||
+    !quantity ||
     !warehouse_name
   ) {
     return { isValid: false, message: "Missing required fields" };

@@ -224,6 +224,6 @@ module.exports = {
   postNewInventoryItem,
   editInventoryItemById,
   postNewInventoryItem,
-  deleteInventoryItemById
+  deleteInventoryItemById,
   getAllItemCategories
 };

@@ -1,6 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
 const { isWarehouseIdValid, isValidPhoneNumberFormat } = require('../utils/helpers')
-const { isWarehouseIdValid } = require('../utils/helper')
 
 const getAllWarehouses = async (_req, res) => {
   try {
