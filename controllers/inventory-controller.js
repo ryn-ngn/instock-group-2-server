@@ -1,9 +1,10 @@
 const knex = require("knex")(require("../knexfile"));
-const helper = require('../utils/helper')
+const { isInvIdValid, isWarehouseIdValid } = require('../utils/helpers')
 const {
   validateNewItem,
   findWarehouseIdByName,
 } = require("../utils/inventoryHelpers");
+
 
 
 const getAllInventories = async (_req, res) => {
@@ -77,7 +78,7 @@ const getItemById = async (req, res) => {
 //update inventory by ID
 const editInventoryItemById = async (req, res) => {
 
-  const isInvValid = await helper.isInvIdValid(req.params.id)
+  const isInvValid = await isInvIdValid(req.params.id)
   if (!isInvValid)
     return res.status(400).json({
       message: `inventory ID is not found`,
@@ -90,7 +91,7 @@ const editInventoryItemById = async (req, res) => {
     });
   }
 
-  const isWhIdValid = await helper.isWarehouseIdValid(warehouse_id);
+  const isWhIdValid = await isWarehouseIdValid(warehouse_id);
   if (!isWhIdValid) {
     return res.status(400).json({
       message: `Warehouse ID not found`,
@@ -197,6 +198,7 @@ const getAllItemCategories = async (req, res) => {
 module.exports = {
   getAllInventories,
   getItemById,
+  postNewInventoryItem,
   editInventoryItemById,
   postNewInventoryItem,
   getAllItemCategories
