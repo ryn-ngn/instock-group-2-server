@@ -19,7 +19,7 @@ function isValidPhoneNumberFormat(input) {
     // remove signs +/- and () from phone number string for validation purpose
     let tempPhoneNoCheck = input.replace(/[()+-\s]/g, '')
     // north american phone number format only - 10 digits
-    const phoneNumberFormat = /^[0-9]{10}$/
+    const phoneNumberFormat = /^[0-9]{11}$/
     return phoneNumberFormat.test(tempPhoneNoCheck)
 }
 
